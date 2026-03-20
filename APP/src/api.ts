@@ -1,35 +1,35 @@
-// src/api.ts
 import axios from 'axios';
-import type { Product, Customer, Order } from './types';
+// ADDED the 'type' keyword here to fix the verbatimModuleSyntax errors
+import type { Customer, Product, Invoice } from './types';
 
-const api = axios.create({
-    baseURL: 'http://127.0.0.1:8000/api/', 
-});
-
-export const productAPI = {
-    getProducts: () => api.get<Product[]>('products/'), 
-    addProduct: (data: Omit<Product, 'productid'>) => api.post<Product>('products/', data),
-    updateProduct: (id: number, data: Partial<Product>) => api.put<Product>(`products/${id}/`, data),
-    deleteProduct: (id: number) => api.delete(`products/${id}/`),
-};
+const API_URL = 'http://localhost:8000/api/';
 
 export const customerAPI = {
-    getCustomers: () => api.get<Customer[]>('customers/'),
-    getCustomer: (id: number) => api.get<Customer>(`customers/${id}/`),
+    getCustomers: () => axios.get(`${API_URL}customers/`),
+    getCustomer: (id: number) => axios.get(`${API_URL}customers/${id}/`),
     
-    // --- THIS IS THE LINE TO FIX ---
-    // Change 'email' to 'username' here:
-    loginCustomer: (credentials: {username: string, password: string}) => 
-        api.post<Customer>('customers/login/', credentials),
-        
-    addCustomer: (data: Omit<Customer, 'customerid'>) => api.post<Customer>('customers/', data),
-    updateCustomer: (id: number, data: Partial<Customer>) => api.put<Customer>(`customers/${id}/`, data),
-    deleteCustomer: (id: number) => api.delete(`customers/${id}/`),
+    // Fixed: Renamed createCustomer back to addCustomer
+    addCustomer: (data: Customer) => axios.post(`${API_URL}customers/`, data), 
+    
+    // Fixed: Added back the login endpoint matching your Django views.py!
+    loginCustomer: (data: any) => axios.post(`${API_URL}customers/login/`, data),
+    
+    updateCustomer: (id: number, data: any) => axios.put(`${API_URL}customers/${id}/`, data),
+    deleteCustomer: (id: number) => axios.delete(`${API_URL}customers/${id}/`)
 };
 
-export const orderAPI = {
-    getOrders: () => api.get<Order[]>('orders/'),
-    addOrder: (data: Omit<Order, 'orderid'>) => api.post<Order>('orders/', data),
-    updateOrder: (id: number, data: Partial<Order>) => api.put<Order>(`orders/${id}/`, data),
-    deleteOrder: (id: number) => api.delete(`orders/${id}/`),
+export const productAPI = {
+    getProducts: () => axios.get(`${API_URL}products/`),
+    getProduct: (id: number) => axios.get(`${API_URL}products/${id}/`),
+    addProduct: (data: any) => axios.post(`${API_URL}products/`, data),
+    updateProduct: (id: number, data: any) => axios.patch(`${API_URL}products/${id}/`, data),
+    deleteProduct: (id: number) => axios.delete(`${API_URL}products/${id}/`)
+};
+
+export const invoiceAPI = {
+    getInvoices: () => axios.get(`${API_URL}invoices/`),
+    getInvoice: (id: number) => axios.get(`${API_URL}invoices/${id}/`),
+    createInvoice: (data: Invoice) => axios.post(`${API_URL}invoices/`, data),
+    updateInvoice: (id: number, data: any) => axios.put(`${API_URL}invoices/${id}/`, data),
+    deleteInvoice: (id: number) => axios.delete(`${API_URL}invoices/${id}/`),
 };

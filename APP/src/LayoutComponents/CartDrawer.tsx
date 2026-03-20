@@ -43,7 +43,11 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
                     ) : (
                         cart.map(item => (
                             <div key={item.product.productid} className="flex gap-4 items-center bg-slate-50 p-3 rounded-xl">
-                                <img src={`https://picsum.photos/seed/${item.product.productid}/100/100`} alt={item.product.productname} className="h-16 w-16 rounded-lg object-cover" />
+                                <img 
+    src={item.product.image || ""} 
+    alt={item.product.productname} 
+    className="h-16 w-16 rounded-lg object-cover" 
+/>
                                 <div className="flex-1">
                                     <h4 className="font-bold text-slate-800">{item.product.productname}</h4>
                                     <p className="text-indigo-600 font-bold">${item.product.price}</p>

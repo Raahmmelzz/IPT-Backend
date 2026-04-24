@@ -14,6 +14,10 @@ import FlyingItem from './LayoutComponents/FlyingItem';
 import AdminPanel from './LayoutComponents/AdminPanel'; 
 import { Invoice } from './LayoutComponents/Invoice';    // <--- Ensure this is imported
 import CheckoutPage from './CheckoutPage';
+<<<<<<< HEAD
+=======
+import ProfilePage from './ProfilePage';
+>>>>>>> 535df5c (with profile)
 
 interface FlyingItemData { id: number; x: number; y: number; img: string; }
 
@@ -42,6 +46,10 @@ const Store: React.FC = () => {
 
     // ... (Keep existing Auth states and handlers)
     const [loggedInCustomer, setLoggedInCustomer] = useState<Customer | null>(null);
+<<<<<<< HEAD
+=======
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
+>>>>>>> 535df5c (with profile)
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
     const [isLoadingAuth, setIsLoadingAuth] = useState(false);
@@ -138,6 +146,10 @@ const Store: React.FC = () => {
                     isManageMode={isManageMode} onToggleAdmin={toggleAdminMode} loggedInCustomer={loggedInCustomer}
                     onOpenAuth={() => setIsAuthModalOpen(true)} onLogout={() => setLoggedInCustomer(null)}
                     onOpenCart={() => setIsCartOpen(true)} cartItemCount={cartItemCount}
+<<<<<<< HEAD
+=======
+                    onOpenProfile={() => setIsProfileOpen(true)}
+>>>>>>> 535df5c (with profile)
                 />
 
                 {!isManageMode ? (
@@ -200,6 +212,21 @@ const Store: React.FC = () => {
                 )}
             </AnimatePresence>
 
+<<<<<<< HEAD
+=======
+            {/* ✅ NEW: Profile Page */}
+            <AnimatePresence>
+                {isProfileOpen && (
+                    <ProfilePage
+                        loggedInCustomer={loggedInCustomer}
+                        onClose={() => setIsProfileOpen(false)}
+                        onLogout={() => { setLoggedInCustomer(null); setIsProfileOpen(false); }}
+                        onCustomerUpdate={(updated) => setLoggedInCustomer(updated)}
+                    />
+                )}
+            </AnimatePresence>
+
+>>>>>>> 535df5c (with profile)
             {/* ✅ NEW: Final Invoice Modal Overlay */}
             <AnimatePresence>
                 {lastOrderData && (

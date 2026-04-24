@@ -11,6 +11,10 @@ interface NavbarProps {
     onLogout: () => void;
     onOpenCart: () => void;
     cartItemCount: number;
+<<<<<<< HEAD
+=======
+    onOpenProfile: () => void;
+>>>>>>> 535df5c (with profile)
 }
 
 // ── Track Order Modal Body ─────────────────────────────────────────────────
@@ -214,7 +218,11 @@ const SAMPLE_NOTIFICATIONS = [
 ];
 
 const Navbar: React.FC<NavbarProps> = ({
+<<<<<<< HEAD
     isManageMode, onToggleAdmin, loggedInCustomer, onOpenAuth, onLogout, onOpenCart, cartItemCount
+=======
+    isManageMode, onToggleAdmin, loggedInCustomer, onOpenAuth, onLogout, onOpenCart, cartItemCount, onOpenProfile
+>>>>>>> 535df5c (with profile)
 }) => {
     const [showNotifications, setShowNotifications] = useState(false);
     const [showHelp, setShowHelp]                   = useState(false);
@@ -352,12 +360,29 @@ const Navbar: React.FC<NavbarProps> = ({
 
                             {/* ── USER / AUTH ── */}
                             {loggedInCustomer ? (
+<<<<<<< HEAD
                                 <div className="flex items-center gap-3 pl-3 border-l border-slate-200">
                                     <div className="text-right hidden sm:block">
                                         <p className="text-xs text-slate-500 font-bold text-white uppercase tracking-wider">Logged in as</p>
                                         <p className="text-sm font-bold text-white text-slate-800">{loggedInCustomer.name}</p>
                                     </div>
                                     <button onClick={onLogout} className="text-xs font-bold text-red-500 hover:text-red-700 bg-red-50 px-3 py-1.5 rounded-lg transition-colors">
+=======
+                                <div className="flex items-center gap-2 pl-3 border-l border-slate-200">
+                                    <button
+                                        onClick={onOpenProfile}
+                                        className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-white/10 transition-all"
+                                    >
+                                        <div className="w-8 h-8 rounded-xl bg-indigo-500 text-white flex items-center justify-center font-black text-sm shadow-md">
+                                            {loggedInCustomer.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
+                                        </div>
+                                        <div className="text-left hidden sm:block">
+                                            <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Logged in as</p>
+                                            <p className="text-sm font-bold text-white leading-tight">{loggedInCustomer.name}</p>
+                                        </div>
+                                    </button>
+                                    <button onClick={onLogout} className="text-xs font-bold text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 px-3 py-1.5 rounded-lg transition-colors">
+>>>>>>> 535df5c (with profile)
                                         Logout
                                     </button>
                                 </div>

@@ -1,5 +1,4 @@
 import axios from 'axios';
-// ADDED the 'type' keyword here to fix the verbatimModuleSyntax errors
 import type { Customer, Product, Invoice } from './types';
 
 const API_URL = 'http://localhost:8000/api/';
@@ -7,14 +6,12 @@ const API_URL = 'http://localhost:8000/api/';
 export const customerAPI = {
     getCustomers: () => axios.get(`${API_URL}customers/`),
     getCustomer: (id: number) => axios.get(`${API_URL}customers/${id}/`),
-    
-    // Fixed: Renamed createCustomer back to addCustomer
     addCustomer: (data: Customer) => axios.post(`${API_URL}customers/`, data), 
-    
-    // Fixed: Added back the login endpoint matching your Django views.py!
     loginCustomer: (data: any) => axios.post(`${API_URL}customers/login/`, data),
     
-    updateCustomer: (id: number, data: any) => axios.put(`${API_URL}customers/${id}/`, data),
+    // CHANGED TO PATCH: This allows partial updates (just name, email, or number)
+    updateCustomer: (id: number, data: any) => axios.patch(`${API_URL}customers/${id}/`, data),
+    
     deleteCustomer: (id: number) => axios.delete(`${API_URL}customers/${id}/`)
 };
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom'; 
 import type { Customer, Invoice, Product } from './types';
 import { customerAPI, invoiceAPI, productAPI } from './api';
 
@@ -18,40 +18,51 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
     onCustomerUpdate,
 }) => {
     const navigate = useNavigate();
+    const location = useLocation(); 
+
+    // ✅ THE ULTIMATE FIX: 1. Check prop -> 2. Check router state -> 3. Check LocalStorage
+    const activeCustomer = loggedInCustomer || location.state?.customer || (() => {
+        const saved = localStorage.getItem('customer_data');
+        try { return saved ? JSON.parse(saved) : null; } catch { return null; }
+    })();
+
     const [activeTab, setActiveTab] = useState<Tab>('overview');
     const [invoices, setInvoices] = useState<Invoice[]>([]);
     const [products, setProducts] = useState<Record<number, Product>>({});
     const [loadingOrders, setLoadingOrders] = useState(true);
-
+    
     const [isEditing, setIsEditing] = useState(false);
     const [editData, setEditData] = useState({
-        name: loggedInCustomer?.name || '',
-        email: loggedInCustomer?.email || '',
-        number: loggedInCustomer?.number || '',
+        name: activeCustomer?.name || '',
+        email: activeCustomer?.email || '',
+        number: activeCustomer?.number || '',
     });
     const [isSaving, setIsSaving] = useState(false);
     const [saveSuccess, setSaveSuccess] = useState(false);
 
     useEffect(() => {
-        if (loggedInCustomer) {
+        // If they truly have no data and no token, kick them to store
+        if (!activeCustomer) { 
+            navigate('/'); 
+        } else {
             setEditData({
-                name: loggedInCustomer.name,
-                email: loggedInCustomer.email,
-                number: loggedInCustomer.number,
+                name: activeCustomer.name,
+                email: activeCustomer.email,
+                number: activeCustomer.number,
             });
-        } else { navigate('/'); }
-    }, [loggedInCustomer, navigate]);
+        }
+    }, [activeCustomer, navigate]);
 
     useEffect(() => {
         const fetchOrders = async () => {
-            if (!loggedInCustomer) return;
+            if (!activeCustomer) return;
             setLoadingOrders(true);
             try {
                 const [invRes, prodRes] = await Promise.all([
                     invoiceAPI.getInvoices(),
                     productAPI.getProducts(),
                 ]);
-                const myInvoices = invRes.data.filter((inv: Invoice) => Number(inv.customer) === Number(loggedInCustomer.customerid));
+                const myInvoices = invRes.data.filter((inv: Invoice) => Number(inv.customer) === Number(activeCustomer.customerid));
                 const productMap: Record<number, Product> = {};
                 prodRes.data.forEach((p: Product) => { if (p.productid != null) productMap[p.productid] = p; });
                 setInvoices(myInvoices);
@@ -59,18 +70,22 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
             } catch (e) { console.error(e); } finally { setLoadingOrders(false); }
         };
         fetchOrders();
-    }, [loggedInCustomer]);
+    }, [activeCustomer]);
 
     const totalSpent = invoices.reduce((sum, inv) => sum + Number(inv.total || 0), 0);
-    const getInitials = (name: string) => name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-    const avatarColor = ['from-indigo-500 to-purple-600', 'from-emerald-500 to-teal-600', 'from-orange-500 to-rose-600'][(loggedInCustomer?.customerid || 0) % 3];
+    const getInitials = (name: string) => name ? name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : '?';
+    const avatarColor = ['from-indigo-500 to-purple-600', 'from-emerald-500 to-teal-600', 'from-orange-500 to-rose-600'][(activeCustomer?.customerid || 0) % 3];
 
     const handleSaveProfile = async (e: React.MouseEvent) => {
         e.preventDefault(); e.stopPropagation();
-        if (!loggedInCustomer?.customerid || isSaving) return;
+        if (!activeCustomer?.customerid || isSaving) return;
         setIsSaving(true);
         try {
-            const res = await customerAPI.updateCustomer(loggedInCustomer.customerid, editData);
+            const res = await customerAPI.updateCustomer(activeCustomer.customerid, editData);
+            
+            // ✅ Keep LocalStorage updated with the new name/details!
+            localStorage.setItem('customer_data', JSON.stringify(res.data));
+            
             onCustomerUpdate(res.data);
             setSaveSuccess(true);
             setIsEditing(false);
@@ -78,16 +93,27 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
         } catch (err) { alert("Save failed."); } finally { setIsSaving(false); }
     };
 
+    // ✅ Bulletproof Logout
+    const handleSignOut = () => {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('customer_data');
+        if (onLogout) onLogout();
+        navigate('/');
+    };
+
+    if (!activeCustomer) return <div className="min-h-screen bg-slate-900" />;
+
     return (
         <div className="min-h-screen w-full bg-slate-900 font-sans overflow-x-hidden flex flex-col">
             <div className="w-full bg-slate-900/50 backdrop-blur-xl border-b border-white/5 py-6 px-12 flex justify-between items-center text-white sticky top-0 z-50">
-                <button onClick={() => navigate('/')} className="font-black text-white/60 hover:text-indigo-400 transition-all flex items-center gap-3 group text-lg">
+                <button type="button" onClick={() => navigate('/')} className="font-black text-white/60 hover:text-indigo-400 transition-all flex items-center gap-3 group text-lg">
                     <span className="text-2xl group-hover:-translate-x-2 transition-transform">←</span> BACK TO STORE
                 </button>
                 <div className="flex items-center gap-4">
                     <h1 className="font-black text-2xl tracking-[0.3em] uppercase italic opacity-40">Profile Dashboard</h1>
                     <div className="h-8 w-[2px] bg-white/10 mx-2" />
-                    <button onClick={onLogout} className="text-red-400 font-black text-xs uppercase tracking-widest hover:text-red-300">Sign Out</button>
+                    <button type="button" onClick={handleSignOut} className="text-red-400 font-black text-xs uppercase tracking-widest hover:text-red-300">Sign Out</button>
                 </div>
             </div>
 
@@ -100,13 +126,13 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
                 <div className="max-w-[1600px] w-full mx-auto px-12 -mt-32 relative z-10">
                     <div className="flex items-end gap-10 mb-12">
                         <div className={`w-56 h-56 rounded-[50px] bg-gradient-to-br ${avatarColor} flex items-center justify-center text-white text-8xl font-black shadow-[0_30px_60px_rgba(0,0,0,0.5)] border-[16px] border-slate-900`}>
-                            {loggedInCustomer ? getInitials(loggedInCustomer.name) : '?'}
+                            {getInitials(activeCustomer.name)}
                         </div>
                         <div className="pb-8 flex-1">
-                            <h2 className="text-6xl font-black text-white tracking-tighter leading-none mb-4">{loggedInCustomer?.name}</h2>
+                            <h2 className="text-6xl font-black text-white tracking-tighter leading-none mb-4">{activeCustomer.name}</h2>
                             <div className="flex gap-4 items-center">
                                 <span className="bg-indigo-500/20 text-indigo-400 px-4 py-1.5 rounded-full font-black text-sm tracking-widest uppercase border border-indigo-500/30">Verified Member</span>
-                                <span className="text-white/40 font-bold text-xl">@{loggedInCustomer?.username}</span>
+                                <span className="text-white/40 font-bold text-xl">@{activeCustomer.username}</span>
                             </div>
                         </div>
                     </div>
@@ -115,7 +141,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
                         <div className="col-span-4 space-y-8">
                             <div className="bg-slate-800/40 border border-white/5 p-3 rounded-[40px] flex flex-col gap-2">
                                 {(['overview', 'orders', 'settings'] as Tab[]).map((t) => (
-                                    <button key={t} onClick={() => setActiveTab(t)} 
+                                    <button key={t} type="button" onClick={() => setActiveTab(t)} 
                                         className={`w-full py-6 rounded-[32px] text-sm font-black transition-all uppercase tracking-[0.2em] flex items-center justify-between px-10 ${
                                             activeTab === t ? 'bg-indigo-600 text-white shadow-2xl scale-[1.02]' : 'text-white/40 hover:text-white hover:bg-white/5'
                                         }`}>
@@ -146,8 +172,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
                                 {activeTab === 'overview' && (
                                     <motion.div key="overview" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} className="space-y-12">
                                         <div className="grid grid-cols-2 gap-8">
-                                            <DetailCard label="Registered Email" value={loggedInCustomer?.email} icon="📧" />
-                                            <DetailCard label="Contact Number" value={`+63 ${loggedInCustomer?.number}`} icon="📞" />
+                                            <DetailCard label="Registered Email" value={activeCustomer.email} icon="📧" />
+                                            <DetailCard label="Contact Number" value={`+63 ${activeCustomer.number}`} icon="📞" />
                                             <DetailCard label="Active Orders" value={invoices.length} icon="🚚" />
                                             <DetailCard label="Account Status" value="Gold Member" icon="👑" />
                                         </div>
@@ -184,7 +210,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
                                     <motion.div key="settings" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="space-y-10 max-w-2xl">
                                         <div className="flex justify-between items-center border-b border-white/10 pb-6">
                                             <h3 className="text-2xl font-black text-white uppercase tracking-tighter italic">Edit Credentials</h3>
-                                            {!isEditing && <button onClick={() => setIsEditing(true)} className="bg-white text-slate-900 px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest">Edit Mode</button>}
+                                            {!isEditing && <button type="button" onClick={() => setIsEditing(true)} className="bg-white text-slate-900 px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest">Edit Mode</button>}
                                         </div>
                                         <div className="space-y-8">
                                             {['name', 'email', 'number'].map((key) => (
@@ -201,10 +227,10 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
                                             ))}
                                             {isEditing && (
                                                 <div className="flex gap-4 pt-10">
-                                                    <button onClick={handleSaveProfile} disabled={isSaving} className="flex-1 bg-indigo-600 text-white py-6 rounded-[30px] font-black text-sm uppercase tracking-[0.3em] hover:bg-indigo-500 active:scale-95 transition-all">
+                                                    <button type="button" onClick={handleSaveProfile} disabled={isSaving} className="flex-1 bg-indigo-600 text-white py-6 rounded-[30px] font-black text-sm uppercase tracking-[0.3em] hover:bg-indigo-500 active:scale-95 transition-all">
                                                         {isSaving ? 'Processing...' : 'Apply Changes'}
                                                     </button>
-                                                    <button onClick={() => setIsEditing(false)} className="px-12 bg-slate-800 text-white/50 py-6 rounded-[30px] font-black text-sm uppercase">Cancel</button>
+                                                    <button type="button" onClick={() => setIsEditing(false)} className="px-12 bg-slate-800 text-white/50 py-6 rounded-[30px] font-black text-sm uppercase">Cancel</button>
                                                 </div>
                                             )}
                                             {saveSuccess && <p className="text-emerald-400 font-black text-sm uppercase tracking-widest mt-6 animate-pulse">✓ Changes Synced Successfully</p>}

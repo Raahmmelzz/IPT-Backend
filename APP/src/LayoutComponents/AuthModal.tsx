@@ -138,11 +138,11 @@ const AuthModal: React.FC<AuthModalProps> = ({
             >
                 {/* ── Tabs ── */}
                 <div className="flex mb-6 border-b border-slate-200">
-                    <button onClick={() => { setAuthMode('login'); resetToForm(); }}
+                    <button type="button" onClick={() => { setAuthMode('login'); resetToForm(); }}
                         className={`flex-1 pb-3 text-sm font-bold transition-colors border-b-2 ${authMode === 'login' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-400 hover:text-slate-600'}`}>
                         Login
                     </button>
-                    <button onClick={() => { setAuthMode('signup'); resetToForm(); }}
+                    <button type="button" onClick={() => { setAuthMode('signup'); resetToForm(); }}
                         className={`flex-1 pb-3 text-sm font-bold transition-colors border-b-2 ${authMode === 'signup' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-400 hover:text-slate-600'}`}>
                         Sign Up
                     </button>
@@ -170,11 +170,12 @@ const AuthModal: React.FC<AuthModalProps> = ({
                             </div>
                         </div>
                         <div className="flex gap-3 mt-6">
-                            <button onClick={handleLogin} disabled={isLoading}
-                                className="flex-1 bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 disabled:opacity-50">
-                                {isLoading ? '...' : 'Login'}
+                            <button type="button" onClick={handleLogin} disabled={isLoading}
+                                className="flex-1 bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 disabled:opacity-50 transition-colors">
+                                {isLoading ? 'Verifying...' : 'Login'}
                             </button>
-                            <button onClick={onClose} className="px-5 bg-slate-100 text-slate-600 font-bold py-3 rounded-xl">Cancel</button>
+                            {/* We keep the Cancel button wired up. If they are in forced-login mode, Store.tsx passes an empty function so it won't break anything. */}
+                            <button type="button" onClick={onClose} className="px-5 bg-slate-100 text-slate-600 font-bold py-3 rounded-xl hover:bg-slate-200 transition-colors">Cancel</button>
                         </div>
                     </div>
                 )}
@@ -255,11 +256,11 @@ const AuthModal: React.FC<AuthModalProps> = ({
                         </div>
 
                         <div className="flex gap-3 mt-4 pt-2">
-                            <button onClick={sendOtp} disabled={isSending}
-                                className="flex-1 bg-green-600 text-white font-bold py-3 rounded-xl hover:bg-green-700 disabled:opacity-50">
+                            <button type="button" onClick={sendOtp} disabled={isSending}
+                                className="flex-1 bg-green-600 text-white font-bold py-3 rounded-xl hover:bg-green-700 disabled:opacity-50 transition-colors">
                                 {isSending ? 'Sending code...' : 'Create Account'}
                             </button>
-                            <button onClick={onClose} className="px-5 bg-slate-100 text-slate-600 font-bold py-3 rounded-xl">Cancel</button>
+                            <button type="button" onClick={onClose} className="px-5 bg-slate-100 text-slate-600 font-bold py-3 rounded-xl hover:bg-slate-200 transition-colors">Cancel</button>
                         </div>
                     </div>
                 )}
@@ -267,7 +268,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
                 {/* ══════════════ SIGN UP — PHONE OTP ══════════════ */}
                 {authMode === 'signup' && step === 'otp' && (
                     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
-                        <button onClick={resetToForm} className="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors">
+                        <button type="button" onClick={resetToForm} className="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors">
                             ← Back to form
                         </button>
 
@@ -298,16 +299,16 @@ const AuthModal: React.FC<AuthModalProps> = ({
                         </AnimatePresence>
 
                         <div className="flex gap-3">
-                            <button onClick={verifyOtp} disabled={isLoading}
-                                className="flex-1 bg-green-600 text-white font-bold py-3 rounded-xl hover:bg-green-700 disabled:opacity-50">
-                                {isLoading ? '...' : '✓ Verify & Create Account'}
+                            <button type="button" onClick={verifyOtp} disabled={isLoading}
+                                className="flex-1 bg-green-600 text-white font-bold py-3 rounded-xl hover:bg-green-700 disabled:opacity-50 transition-colors">
+                                {isLoading ? 'Verifying...' : '✓ Verify & Create'}
                             </button>
-                            <button onClick={onClose} className="px-5 bg-slate-100 text-slate-600 font-bold py-3 rounded-xl">Cancel</button>
+                            <button type="button" onClick={onClose} className="px-5 bg-slate-100 text-slate-600 font-bold py-3 rounded-xl hover:bg-slate-200 transition-colors">Cancel</button>
                         </div>
 
                         <p className="text-center text-xs text-slate-400">
                             Didn't receive it?{' '}
-                            <button onClick={resendOtp} disabled={isSending}
+                            <button type="button" onClick={resendOtp} disabled={isSending}
                                 className="text-indigo-600 font-bold hover:underline disabled:opacity-50">
                                 {isSending ? 'Sending...' : 'Resend code'}
                             </button>

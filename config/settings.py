@@ -121,12 +121,36 @@ USE_TZ = True
 STATIC_URL = 'static/'
 # config/settings.py
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://localhost:5174",  # Add this one!
-    "http://127.0.0.1:5173",
-    "http://127.0.0.1:5174",  # Add this one too for safety
-    "http://localhost:3000",
-]
+CORS_ALLOW_ALL_ORIGINS = True  # dev only
+
+# ── Media (local fallback) ────────────────────────────────────────────────────
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# ── Cloudinary ────────────────────────────────────────────────────────────────
+# 1. pip install cloudinary django-cloudinary-storage
+# 2. Sign up at cloudinary.com → Dashboard → copy the three values below
+# 3. Uncomment the block once you have your credentials
+
+# import cloudinary
+# INSTALLED_APPS += ['cloudinary_storage', 'cloudinary']
+# CLOUDINARY_STORAGE = {
+#     'CLOUD_NAME': 'YOUR_CLOUD_NAME',
+#     'API_KEY':    'YOUR_API_KEY',
+#     'API_SECRET': 'YOUR_API_SECRET',
+# }
+# DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# ── Email (Gmail SMTP) ────────────────────────────────────────────────────────
+# 1. Enable 2-Step Verification on your Google account
+# 2. Go to myaccount.google.com → Security → App Passwords
+# 3. Generate an App Password for "Mail" and paste it below
+# 4. Replace the email address with your own Gmail
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'pacamo.rammel29@gmail.com'
+EMAIL_HOST_PASSWORD = 'ykcc eghf kxmg ekev'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

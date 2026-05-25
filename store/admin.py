@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Customer, Product, Invoice, InvoiceItem
+from .models import Customer, Product, Invoice, InvoiceItem, ChatMessage, KnowledgeBase
 
 # Register the standard models
 admin.site.register(Customer)
@@ -23,3 +23,16 @@ class InvoiceAdmin(admin.ModelAdmin):
     
     # Keep the calculated totals read-only so they can't be tampered with manually
     readonly_fields = ('subtotal', 'tax', 'total', 'date')
+
+
+@admin.register(ChatMessage)
+class ChatMessageAdmin(admin.ModelAdmin):
+    list_display = ('role', 'message', 'created_at')
+    list_filter = ('role',)
+    readonly_fields = ('role', 'message', 'created_at')
+
+
+@admin.register(KnowledgeBase)
+class KnowledgeBaseAdmin(admin.ModelAdmin):
+    list_display = ('title', 'created_at')
+    search_fields = ('title', 'text_content')

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Customer, Product, Invoice, InvoiceItem
+from .models import Customer, Product, Invoice, InvoiceItem, KnowledgeBase, ChatMessage
 from decimal import Decimal
 from django.utils import timezone
 from datetime import timedelta
@@ -76,3 +76,15 @@ class InvoiceSerializer(serializers.ModelSerializer):
         
         invoice.save() # Commit the math to DB
         return invoice
+
+
+class KnowledgeBaseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = KnowledgeBase
+        fields = '__all__'
+
+
+class ChatMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChatMessage
+        fields = '__all__'

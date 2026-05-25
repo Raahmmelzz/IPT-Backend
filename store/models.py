@@ -7,9 +7,9 @@ class Customer(models.Model):
     username = models.CharField(max_length=50, unique=True)
     email = models.EmailField(unique=True)
     number = models.CharField(max_length=20)
-    # Note: For a real app, use Django's built-in User model for hashed passwords! 
-    # But for a school project, this plaintext setup might be okay to keep it simple.
-    password = models.CharField(max_length=255) 
+    password = models.CharField(max_length=255)
+    profile_picture = models.ImageField(upload_to='profiles/', null=True, blank=True)
+    is_verified = models.BooleanField(default=False)
 
     def __str__(self):
         return self.username
@@ -51,3 +51,37 @@ class InvoiceItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity}x {self.product.productname}"
+
+
+class OTPCode(models.Model):
+    email = models.EmailField()
+    code = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_used = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.email} - {self.code}"
+
+
+class KnowledgeBase(models.Model):
+    title = models.CharField(max_length=255)
+    text_content = models.TextField(blank=True, null=True)
+    pdf_file = models.FileField(upload_to='pdfs/', null=True, blank=True)
+    website_url = models.URLField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+
+class ChatMessage(models.Model):
+    ROLE_CHOICES = (
+        ('user', 'User'),
+        ('assistant', 'Assistant'),
+    )
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.role

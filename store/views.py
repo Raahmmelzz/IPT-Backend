@@ -288,12 +288,20 @@ User: {user_message}
 Assistant:"""
 
         try:
-            ollama_res = http_requests.post(
-                "http://localhost:11434/api/generate",
-                json={"model": "qwen2.5:0.5b", "prompt": prompt, "stream": False},
-                timeout=60,
+            groq_res = http_requests.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {django_settings.GROQ_API_KEY}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "model": "llama3-8b-8192",
+                    "messages": [{"role": "user", "content": prompt}],
+                    "max_tokens": 300,
+                },
+                timeout=30,
             )
-            ai_response = ollama_res.json().get("response", "Sorry, I could not generate a response.")
+            ai_response = groq_res.json()["choices"][0]["message"]["content"].strip()
         except Exception:
             ai_response = "AI service is unavailable. Please try again later."
 

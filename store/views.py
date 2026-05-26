@@ -162,37 +162,34 @@ class CustomerViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'], url_path='signup')
     def signup(self, request):
         email    = request.data.get('email', '').strip()
-        otp      = request.data.get('otp', '').strip()
         name     = request.data.get('name', '').strip()
         username = request.data.get('username', '').strip()
         number   = request.data.get('number', '').strip()
         password = request.data.get('password', '').strip()
 
-        if not all([email, otp, name, username, number, password]):
+        if not all([email, name, username, number, password]):
             return Response({'error': 'All fields are required.'}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Verify OTP (valid for 5 minutes)
-        valid_from = timezone.now() - timedelta(minutes=5)
-        otp_obj = OTPCode.objects.filter(
-            email=email, code=otp, is_used=False, created_at__gte=valid_from
-        ).first()
-
-        if not otp_obj:
-            return Response({'error': 'Invalid or expired code.'}, status=status.HTTP_400_BAD_REQUEST)
 
         if Customer.objects.filter(username=username).exists():
             return Response({'error': 'Username already taken.'}, status=status.HTTP_400_BAD_REQUEST)
         if Customer.objects.filter(email=email).exists():
             return Response({'error': 'Email already registered.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        otp_obj.is_used = True
-        otp_obj.save()
-
-        customer = Customer.objects.create(
+        Customer.objects.create(
             name=name, username=username, email=email, number=number, password=password,
-            is_verified=True
+            is_verified=False
         )
-        return Response(self.get_serializer(customer).data, status=status.HTTP_201_CREATED)
+
+        try:
+            code = _issue_otp(email)
+            _send_verification_email(email, code)
+        except Exception:
+            pass
+
+        return Response(
+            {'message': 'Account created! Check your email for a verification code to activate your account.'},
+            status=status.HTTP_201_CREATED
+        )
 
 
 class ProductViewSet(viewsets.ModelViewSet):

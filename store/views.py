@@ -299,7 +299,10 @@ Assistant:"""
                 timeout=30,
             )
             ai_response = groq_res.json()["choices"][0]["message"]["content"].strip()
-        except Exception:
+        except Exception as e:
+            print(f"[GROQ ERROR] {e}")
+            if groq_res := locals().get('groq_res'):
+                print(f"[GROQ RESPONSE] {groq_res.status_code} {groq_res.text}")
             ai_response = "AI service is unavailable. Please try again later."
 
         ai_chat = ChatMessage.objects.create(role='assistant', message=ai_response)

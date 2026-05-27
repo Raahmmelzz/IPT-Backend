@@ -300,10 +300,13 @@ Assistant:"""
             )
             ai_response = groq_res.json()["choices"][0]["message"]["content"].strip()
         except Exception as e:
+            import sys
             raw = locals().get('groq_res')
             detail = f"{type(e).__name__}: {e}"
             if raw is not None:
                 detail += f" | HTTP {raw.status_code}: {raw.text[:300]}"
+            sys.stderr.write(f"[GROQ ERROR] {detail}\n")
+            sys.stderr.flush()
             ai_response = f"[DEBUG] {detail}"
 
         ai_chat = ChatMessage.objects.create(role='assistant', message=ai_response)

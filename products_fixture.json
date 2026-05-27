@@ -1,0 +1,182 @@
+[
+  {
+    "model": "store.product",
+    "pk": 1,
+    "fields": {
+      "productname": "Nintendo Switch",
+      "price": "15955.99",
+      "image": "products/Oled-Blue-Red1.jpg"
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 2,
+    "fields": {
+      "productname": "Play Station 4",
+      "price": "9000.00",
+      "image": "products/144670.jpg"
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 3,
+    "fields": {
+      "productname": "Play Station 4 Games",
+      "price": "1000.00",
+      "image": "products/istockphoto-507215209-612x612.jpg"
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 4,
+    "fields": {
+      "productname": "X-Box Controller",
+      "price": "2999.99",
+      "image": "products/images_2.jfif"
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 5,
+    "fields": {
+      "productname": "X-Box 360",
+      "price": "7499.99",
+      "image": "products/Xbox-360-2.jpg"
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 6,
+    "fields": {
+      "productname": "Wii",
+      "price": "8999.45",
+      "image": "products/514LpNgQeLL.jpg"
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 7,
+    "fields": {
+      "productname": "Mobile Phone Controller",
+      "price": "450.00",
+      "image": "products/51dcdWv6K9S.jpg"
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 8,
+    "fields": {
+      "productname": "Keyboard",
+      "price": "599.99",
+      "image": "products/71p3Hx03dL._AC_SL1500_.jpg"
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 9,
+    "fields": {
+      "productname": "Mouse",
+      "price": "1209.78",
+      "image": "products/61pDShoLXqL._AC_SL1000_.jpg"
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 10,
+    "fields": {
+      "productname": "Mouse Pad",
+      "price": "820.79",
+      "image": "products/71wmU4EjyuL._AC_UF10001000_QL80_.jpg"
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 11,
+    "fields": {
+      "productname": "Headset",
+      "price": "7000.00",
+      "image": "products/61OvxGHZ4hL._AC_UF8941000_QL80_.jpg"
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 12,
+    "fields": {
+      "productname": "Play Station 5 Controller",
+      "price": "7023.12",
+      "image": "products/7_f4057f2d-2392-40c1-964c-3e94c8faeaa1.webp"
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 13,
+    "fields": {
+      "productname": "GameBoy Advance",
+      "price": "781.99",
+      "image": "products/64072793c180616c27507709-nintendo-game-boy-advance-sp-console.jpg"
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 14,
+    "fields": {
+      "productname": "GameCube",
+      "price": "9199.99",
+      "image": "products/NGC.jpg"
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 15,
+    "fields": {
+      "productname": "T1 Jersey",
+      "price": "999.99",
+      "image": "products/1.jpg"
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 16,
+    "fields": {
+      "productname": "Chair",
+      "price": "1279.99",
+      "image": "products/1764.jpg"
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 17,
+    "fields": {
+      "productname": "DS",
+      "price": "3999.99",
+      "image": "products/d7ba3766-210d-47fc-abbf-1324d6e0dc20.b1764e529b13a7f0f740675387020ac9.jpg"
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 18,
+    "fields": {
+      "productname": "iPod Classic",
+      "price": "3000.00",
+      "image": "products/ipod_nano_silver.jpg"
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 19,
+    "fields": {
+      "productname": "Finger Sleeve",
+      "price": "80.00",
+      "image": "products/1_2cb5a709-83cb-4b74-b8fc-1fba2f5bc5a1.jpg"
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 20,
+    "fields": {
+      "productname": "CPU Case",
+      "price": "700.00",
+      "image": "products/images_3.jfif"
+    }
+  }
+]
